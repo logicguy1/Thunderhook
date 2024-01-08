@@ -6,7 +6,6 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 url = "https://thunderstore.io/c/lethal-company/?ordering=last-updated"
 webhook_url = "https://discord.com/api/webhooks/{channel_id}/{token}"
 
-
 def find_new_dicts(old_list, new_list):
     """
     Find new dictionaries in new_list that are not present in old_list.
@@ -21,7 +20,6 @@ def find_new_dicts(old_list, new_list):
     names = [i.get("name") for i in old_list]
     new_dicts = [new_dict for new_dict in new_list if new_dict.get("name") not in names]
     return new_dicts
-
 
 def fetch_items():
     """
@@ -45,6 +43,7 @@ def fetch_items():
         children = list(item.children)
         
         img = children[1].find("img")["src"]
+        post_url = "https://thunderstore.io" + children[1].find("a")["href"]
         description = children[5].text.strip()
         tags = [i.text.strip() for i in children[7] if i.text.strip() != ""]
 
@@ -57,6 +56,7 @@ def fetch_items():
 
         out.append({
             "name": name,
+            "url": post_url,
             "img": img,
             "description": description,
             "tags": tags,
@@ -81,11 +81,11 @@ while True:
         # Create the embed and send it to the server
         webhook = DiscordWebhook(url=webhook_url)
 
-        embed = DiscordEmbed(title=mod.get("name"), description=mod.get("description"), color="df3432")
+        embed = DiscordEmbed(title=mod.get("name"), description=mod.get("description"), color="df3432", url=mod.get("url"))
         embed.set_thumbnail(url=mod.get("img"))
 
-        embed.add_embed_field(name="Downloads", value="`"+mod.get("downlaods")+"`", inline=True)
-        embed.add_embed_field(name="Likes", value="`"+mod.get("likes")+"`", inline=True)
+        embed.add_embed_field(name="Downloads", value="`"+mod.get("downlaods")+"` <:LethalPoint:1187900986300309566>", inline=True)
+        embed.add_embed_field(name="Likes", value="`"+mod.get("likes")+"` <:LethalUwU:1188231578674004030>", inline=True)
         embed.add_embed_field(name="Tags", value="```"+", ".join(mod.get("tags"))+"```", inline=False)
 
         embed.set_author(name=mod.get("author"), url=mod.get("author_url"))
